@@ -4,6 +4,7 @@ import classes from './Todo.module.css';
 import axios from '../../axios-ListData';
 
 import ListTodo from './ListTodo/ListTodo'
+import withErrorHandler from '../../hoc/withErrorHandler/withErrorHandler';
 
 class Todo extends Component {
 
@@ -146,4 +147,4 @@ class Todo extends Component {
     }
 }
 
-export default Todo;
+export default withErrorHandler(Todo,axios);

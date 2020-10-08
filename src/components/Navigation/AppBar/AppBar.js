@@ -3,11 +3,13 @@ import {AppBar , Toolbar , Typography } from '@material-ui/core'
 
 import classes from './AppBar.module.css'
 import NavigationItems from '../NavigationItems/NavigationItems';
+import ToggleDrawer from '../SideDrawer/ToggleDrawer/ToggleDrawer'
 const appBar = (props) => {
 
     return (
-        <AppBar position="static" className={classes.AppBar}>
+        <AppBar position="fixed" className={classes.AppBar}>
         <Toolbar>
+            <ToggleDrawer  clicked ={props.toggleDrawer}/>
             <Typography variant="h4">
                    TodoApp
             </Typography>

@@ -1,0 +1,12 @@
+.SideDrawer {
+
+
+
+
+}
+
+@media (min-width: 500px) {
+    .SideDrawer {
+        display: none;
+    }
+}
