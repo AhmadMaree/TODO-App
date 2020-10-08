@@ -12,20 +12,21 @@ import classes from './ListTodo.module.css'
 const listTodo = (props) => {
         return (
                 <ListItem  key ={props.Key} role={undefined} dense button className ={classes.ListItem}>
-                    <ListItemIcon className={classes.ListItemIcon}>
+                    <ListItemIcon className={classes.ListItemIcon} onClick={props.checkBtn}>
                              <Checkbox 
                                  edge="start"
                                  checked={props.checked}
                                  tabIndex={-1}
                                  disableRipple
                                  color = "primary"
-                                 inputProps={{ 'aria-labelledby': props.Key}}    
+                                 inputProps={{ 'aria-labelledby': props.Key}}
+                                     
                              />
                     </ListItemIcon>
                     <ListItemText id={props.Key} primary={props.todoText} />
                             <ListItemSecondaryAction>
-                                <IconButton edge="end" aria-label="delete">
-                                    <DeleteIcon />
+                                <IconButton edge="end" aria-label="delete" onClick={props.clickToRemove} >
+                                    <DeleteIcon  />
                                 </IconButton>
                             </ListItemSecondaryAction>
             </ListItem>
