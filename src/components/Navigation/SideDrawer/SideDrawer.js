@@ -5,13 +5,14 @@ import NavigationItems from '../NavigationItems/NavigationItems'
 
 const sideDrawer = (props) => {
 
-
+    
     
     return (
         <React.Fragment >
              <SwipeableDrawer
                         anchor={'left'}
                         open={props.show}
+                        onOpen={props.closed}
                         onClose={props.closed}
                     >
                         <div className={classes.SideDrawer}>

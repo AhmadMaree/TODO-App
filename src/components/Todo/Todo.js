@@ -24,17 +24,15 @@ class Todo extends Component {
                 return {...response.data[item]  ,id : item}  })
                for( let key in todoData) {
                   if(todoData[key].Date === new Date().toDateString()){
-                         console.log(todoData[key].Date)
                          updateTodoData.push(todoData[key])
                   }
 
                 }
-                  console.log(updateTodoData)
               this.setState({
                   todoList : updateTodoData
               })
             }).catch(err => {
-              console.log(err)
+              //error Massage
             })
     }
 

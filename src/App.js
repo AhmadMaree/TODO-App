@@ -5,6 +5,7 @@ import { Route ,Switch } from 'react-router-dom';
 import Layout from './hoc/Layout/Layout';
 import Todo from './components/Todo/Todo';
 import ChartTodo from './components/ChartTodo/ChartTodo';
+import * as routeConst from './Shared/Constants/constantRouter';
 
 
 class App extends Component {
@@ -13,8 +14,8 @@ class App extends Component {
           <div>
             <Layout>
               <Switch>
-              <Route path="/chart" component={ChartTodo}/>
-              <Route path="/" component={Todo}/>
+              <Route path={routeConst.CHARTS_PATH} component={ChartTodo}/>
+              <Route path={routeConst.ROOT_PATH} component={Todo}/>
               </Switch>
             </Layout>
           </div>
