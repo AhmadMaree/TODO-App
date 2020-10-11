@@ -1,41 +1,23 @@
 import React, { Component } from 'react' ;
 import {TextField  , Button , List} from '@material-ui/core'
+import {connect} from 'react-redux';
+
 import classes from './Todo.module.css';
 import axios from '../../axios-ListData';
-
 import ListTodo from './ListTodo/ListTodo'
 import withErrorHandler from '../../hoc/withErrorHandler/withErrorHandler';
-
+import * as routsPath from '../../Shared/Constants/constantRouter'
+import * as actions from '../../store/actions/index';
+import { Redirect } from 'react-router-dom';
 class Todo extends Component {
 
     state = {
-       todoList : [] ,
        value : '' ,
-       id : '',
-       checked : false,
-       
     }
 
     componentDidMount () {
-      axios.get('/ListTodo.json')
-            .then(response => {    
-              let updateTodoData = [] ;
-              let todoData = Object.keys(response.data).map(item => {
-                return {...response.data[item]  ,id : item}  })
-               for( let key in todoData) {
-                  if(todoData[key].Date === new Date().toDateString()){
-                         updateTodoData.push(todoData[key])
-                  }
-
-                }
-              this.setState({
-                  todoList : updateTodoData
-              })
-            }).catch(err => {
-              //error Massage
-            })
+      this.props.onFetchTodo();
     }
-
 
     handleChange = (event) => {
        this.setState({
@@ -43,80 +25,40 @@ class Todo extends Component {
        })
 
     }
-
     onAddTodoHandler = (event , inputValue) => {
       event.preventDefault();
-      const newArr = [...this.state.todoList];
       const todoData = {
-        name : inputValue ,
+        name : inputValue.trim() ,
         Date : new Date().toDateString(),
         checked : false ,
       }
-      axios.post("/ListTodo.json" , todoData)
-            .then(response => {
-              newArr.push({...todoData ,id:response.data.name})
-              this.setState({
-                todoList : newArr ,
-                value : ''
-              })
-            }).catch(err => {
-              console.log(err)
-            })
+      this.props.onAddTodo(todoData)
     }
-    onRemoveTodoTasks = index => {
-        axios.delete(`/ListTodo/${index}.json`)
-              .then(res => {
-                this.setState( previousState => {
-                  return {
-                    todoList : previousState.todoList.filter(item => item.id !== index)
-                  };
-                });
-              }).catch(err=>{
-                console.log(err);
-              })
-       
-    }
-
-    onCheckBtnHandler = (index , item) => {
-      const updateChecked = {
-          ...item,
-          checked : !item.checked
-      }
-      axios.put(`/ListTodo/${item.id}.json`,updateChecked)
-             .then(res => {
-               let newArr = [...this.state.todoList.filter(item => index !== item.id)];
-               newArr.push({...updateChecked})
-               this.setState({
-                  todoList : newArr,
-                })
-             }).catch(err => {
-
-             })
-
-    }
-
     render() {
-
-
+      let redirectWhenFails= null
+      if(this.props.error) {
+        redirectWhenFails= <Redirect to = {routsPath.ROOT_PATH}  />
+      }
       let todoListData = (
           <p style={{alignItems:'center',color:'#6200EE'}}>Let's Add SOME TO-DO</p>
       )
-      if(this.state.todoList != null) {
+      if(this.props.todoList != null) {
         todoListData = (
             <List className={classes.List}>
-                        {this.state.todoList.map((itemTodo) => (
+                        {this.props.todoList.map((itemTodo) => (
 
                               <ListTodo key ={itemTodo.id} 
                                         checked={itemTodo.checked}
                                         todoText={itemTodo.name}
-                                        clickToRemove={()=>this.onRemoveTodoTasks(itemTodo.id)}
-                                        checkBtn ={()=> this.onCheckBtnHandler(itemTodo.id,itemTodo)}/>
+                                        clickToRemove={()=>this.props.onRemoveTodo(itemTodo.id)}
+                                        checkBtn ={()=> this.props.onCheckBtnHandler(itemTodo)}/>
                         ))}
             </List> 
            )
       }
       return(  
           <div className={classes.Todo}>
+                 {redirectWhenFails}
                 <form className={classes.form}  noValidate autoComplete="off"  onSubmit={(event) =>this.onAddTodoHandler(event,this.state.value)}>
                 <TextField 
                         className={classes.TextField}
@@ -145,4 +87,20 @@ class Todo extends Component {
     }
 }
 
-export default withErrorHandler(Todo,axios);
+const mapStateToProps = state => {
+    return {
+      todoList:state.todo.todoList,
+      error: state.todo.error
+    }
+}
+
+const mapDispatchToProps = dispatch => {
+  return {
+    onAddTodo : (orderData) => dispatch(actions.addTodo(orderData)) ,
+    onFetchTodo: () => dispatch(actions.fetchTodo()),
+    onRemoveTodo : (index) => dispatch(actions.removeTodo(index)),
+    onCheckBtnHandler : (itemData) => dispatch(actions.checkedTodo(itemData))
+  }
+}
+
+export default connect(mapStateToProps,mapDispatchToProps) (withErrorHandler(Todo,axios));
