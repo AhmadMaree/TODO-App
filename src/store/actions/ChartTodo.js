@@ -21,18 +21,17 @@ export const chartFail= (error) =>{
     }
 }
 
-export const fetchChartData = () => {
+export const fetchChartData = (userId,token) => {
     return dispatch => {
         dispatch(chartStart())
-    axios.get('/ListTodo.json')
+        const quaryParams = '?auth='+token+'&orderBy="userId"&equalTo="' + userId + '"';
+     axios.get('/ListTodo.json'+quaryParams)
          .then(response => {
-                const todoData = Object.values(Object.keys(response.data).map((item) => {
-                    return {...response.data[item],id : item}  
-                }).reduce((item ,{Date}) =>{
-                    item[Date] = item[Date] || {Date,count: 0};
-                    item[Date].count++;
+                const todoData = Object.entries(response.data).reduce((item ,[key,value]) =>{
+                    item[value.Date] =  item[value.Date]|| {Date:value.Date,count: 0};
+                    item[value.Date].count++;
                     return item;
-                },{}))
+                },[])
                dispatch(chartSuccess(todoData))
         }).catch(err=>{
                dispatch(chartFail(err))

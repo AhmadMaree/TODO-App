@@ -22,8 +22,9 @@ const removeTodoSuccsse = (state,action) => {
     })
 }
 const checkedTodoSuccsse = (state,action) => {
-   const updateList= state.todoList.filter(item => item.id !== action.index)
-    return updateObject(state,{todoList: updateList.concat(action.itemData)})
+   //const updateList= state.todoList.filter(item => item.id !== action.index)
+   const updateList = state.todoList.map(item => (item.id === action.index ? {...action.itemData,item} : item ))
+    return updateObject(state,{todoList: updateList})
 }
 const errorMessage = (state, action) => {
     return updateObject(state,{error:action.error})

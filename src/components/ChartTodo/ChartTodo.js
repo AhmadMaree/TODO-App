@@ -13,10 +13,10 @@ class ChartTodo extends Component {
 
 
     componentDidMount () {
-     this.props.onFetchChartData();  
+     this.props.onFetchChartData(this.props.userid,this.props.token);  
     }
     render(){
-
+        
         let chart = <CircularProgress className={classes.Loading} />
         if(!this.props.loading) {
             if(this.props.error) {
@@ -25,7 +25,7 @@ class ChartTodo extends Component {
             chart = (<ResponsiveContainer width="100%" height={600}>
                             <BarChart
                                     style={{ margin: "0 auto" }}
-                                     data={this.props.todoList}  >
+                                     data={Object.values(this.props.todoList)}>
                             <CartesianGrid strokeDasharray="3 3" />
                              <XAxis dataKey="Date" tickSize={5} height={100} interval={0} tick={props => {
                                     return (
@@ -60,12 +60,13 @@ const mapStateToProps = state => {
         todoList : state.chart.todoList ,
         error : state.chart.error ,
         loading : state.chart.loading,
+        userid:state.auth.userId,
+        token : state.auth.idToken,
     }
 }
-
 const mapDispatchToProps = dispatch => {
     return {
-        onFetchChartData : () => dispatch(actions.fetchChartData())
+        onFetchChartData : (userid,token) => dispatch(actions.fetchChartData(userid,token))
     }
 }
 export default connect(mapStateToProps,mapDispatchToProps)(withErrorHandler(ChartTodo , axios ));

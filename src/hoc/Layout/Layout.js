@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import {connect} from 'react-redux'
 
 import classes from './Layout.module.css'
 import AppBar from '../../components/Navigation/AppBar/AppBar';
@@ -25,8 +26,8 @@ class Layout extends Component {
         return( 
         
         <React.Fragment>
-            <AppBar toggleDrawer={this.sideDrawerToggleHandler}  />
-            <SideDrawer show ={this.state.showSideDrawer} closed ={this.showSideCloseDrawerHandler}/>
+            <AppBar toggleDrawer={this.sideDrawerToggleHandler}  isAuth ={this.props.isAuthicate} />
+            <SideDrawer isAuth ={this.props.isAuthicate} show ={this.state.showSideDrawer} closed ={this.showSideCloseDrawerHandler}/>
             <main className={classes.Layout}>
                 {this.props.children}
             </main>
@@ -34,5 +35,10 @@ class Layout extends Component {
         )
     }
 }
+const mapStateToProps = state => {
+    return {
+        isAuthicate : state.auth.idToken !== null
+    }
+}
 
-export default Layout;
+export default connect(mapStateToProps)(Layout);

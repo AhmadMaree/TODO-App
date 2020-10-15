@@ -8,3 +8,10 @@ export {
 export {
     fetchChartData
 } from './ChartTodo'
+
+export {
+    auth,
+    setRedirctPath,
+    logOut,
+    checkAuthState
+} from './Auth'

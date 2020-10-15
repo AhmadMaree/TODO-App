@@ -33,10 +33,10 @@ export const fetchTodoFailer = (err) => {
     }
 }
 
-export const addTodo = (todoData) => {
+export const addTodo = (todoData,token) => {
 
     return dispatch => {
-        axios.post("/ListTodo.json" , todoData)
+        axios.post("/ListTodo.json?auth="+token , todoData)
         .then(response => {
           dispatch(addTodoSuccess(todoData,response.data.name))
         }).catch(err => {
@@ -45,9 +45,10 @@ export const addTodo = (todoData) => {
     }
 
 }
-export const removeTodo = (index) => {
+export const removeTodo = (index,token) => {
     return dispatch => {
-        axios.delete(`/ListTodo/${index}.json`)
+        
+        axios.delete(`/ListTodo/${index}.json?auth=`+token)
         .then(res => {
             dispatch(removeTodoSuccess(index))
         }).catch(err=>{
@@ -56,9 +57,10 @@ export const removeTodo = (index) => {
     }
 }
 
-export const fetchTodo = () =>{
+export const fetchTodo = (token,userId) =>{
     return dispatch => {
-        axios.get('/ListTodo.json')
+        const quaryParams ='?auth='+token+'&orderBy="userId"&equalTo="' + userId + '"';
+        axios.get('/ListTodo.json'+quaryParams)
         .then(response => {
           let todoData = Object.keys(response.data).map(item => {
             return {...response.data[item]  ,id : item}  })
@@ -78,13 +80,13 @@ export const checkedTodoSuccess = (updateChecked,index) => {
     }
 
 }
-export const checkedTodo = (item) =>{
+export const checkedTodo = (item,token) =>{
     return dispatch => {
         const updateChecked = {
             ...item,
             checked : !item.checked
         }
-        axios.put(`/ListTodo/${item.id}.json`,updateChecked)
+        axios.put(`/ListTodo/${item.id}.json?auth=`+token,updateChecked)
         .then(res => {
           dispatch(checkedTodoSuccess(res.data,item.id))
         }).catch(err => {

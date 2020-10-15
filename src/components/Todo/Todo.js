@@ -13,26 +13,39 @@ class Todo extends Component {
 
     state = {
        value : '' ,
+       error : false,
     }
 
     componentDidMount () {
-      this.props.onFetchTodo();
+      this.props.onFetchTodo(this.props.token,this.props.userid);
     }
 
     handleChange = (event) => {
        this.setState({
              value : event.target.value,
+             error:false,
        })
 
     }
     onAddTodoHandler = (event , inputValue) => {
       event.preventDefault();
-      const todoData = {
-        name : inputValue.trim() ,
-        Date : new Date().toDateString(),
-        checked : false ,
+      if(inputValue.trim() === ''){
+        this.setState({
+          error:true
+        })
+      }else{
+        const todoData = {
+          name : inputValue.trim() ,
+          Date : new Date().toDateString(),
+          checked : false ,
+          userId : this.props.userid,
+        }
+        this.props.onAddTodo(todoData,this.props.token)
+        this.setState({
+          value :'',
+          error : false,
+        })
       }
-      this.props.onAddTodo(todoData)
     }
     render() {
       let redirectWhenFails= null
@@ -50,8 +63,8 @@ class Todo extends Component {
                               <ListTodo key ={itemTodo.id} 
                                         checked={itemTodo.checked}
                                         todoText={itemTodo.name}
-                                        clickToRemove={()=>this.props.onRemoveTodo(itemTodo.id)}
-                                        checkBtn ={()=> this.props.onCheckBtnHandler(itemTodo)}/>
+                                        clickToRemove={()=>this.props.onRemoveTodo(itemTodo.id,this.props.token)}
+                                        checkBtn ={()=> this.props.onCheckBtnHandler(itemTodo,this.props.token)}/>
                         ))}
             </List> 
            )
@@ -64,18 +77,20 @@ class Todo extends Component {
                         className={classes.TextField}
                         id="outlined-full-width"
                         label="Todo"
-                        multiline
+                        fullWidth
                         rowsMax={4}
                         size ="medium"
+                        error={this.state.error}
+                        helperText={this.state.error ?"Must fill the contant":""}
                         value={this.state.value}
                         onChange={this.handleChange}
                       />
                   <Button
-                  className={classes.button}
-                   variant="contained"
-                   color="primary"
-                   size="large"
-                    type="submit"
+                      type="submit"
+                      className={classes.button}
+                      variant="contained"
+                      color="primary"
+                      size="large"
                    >
                     ADD
                   </Button>
@@ -90,16 +105,18 @@ class Todo extends Component {
 const mapStateToProps = state => {
     return {
       todoList:state.todo.todoList,
-      error: state.todo.error
+      error: state.todo.error,
+      userid:state.auth.userId,
+      token : state.auth.idToken,
     }
 }
 
 const mapDispatchToProps = dispatch => {
   return {
-    onAddTodo : (orderData) => dispatch(actions.addTodo(orderData)) ,
-    onFetchTodo: () => dispatch(actions.fetchTodo()),
-    onRemoveTodo : (index) => dispatch(actions.removeTodo(index)),
-    onCheckBtnHandler : (itemData) => dispatch(actions.checkedTodo(itemData))
+    onAddTodo : (orderData,token) => dispatch(actions.addTodo(orderData,token)) ,
+    onFetchTodo: (token,userid) => dispatch(actions.fetchTodo(token,userid)),
+    onRemoveTodo : (index,token) => dispatch(actions.removeTodo(index,token)),
+    onCheckBtnHandler : (itemData,token) => dispatch(actions.checkedTodo(itemData,token))
   }
 }
 
