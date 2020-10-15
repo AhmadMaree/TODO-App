@@ -1,49 +1,31 @@
 import React, { Component } from 'react';
+import {connect} from "react-redux"
 import { Paper } from '@material-ui/core';
 import {BarChart,CartesianGrid ,XAxis,YAxis,Bar , ResponsiveContainer  , Tooltip, Text} from 'recharts'
+import CircularProgress from '@material-ui/core/CircularProgress';
 import classes from './ChartTodo.module.css';
 import axios from '../../axios-ListData';
 import withErrorHandler from '../../hoc/withErrorHandler/withErrorHandler';
+import * as actions from '../../store/actions/index';
 
 
 class ChartTodo extends Component {
 
 
-    state = {
-        todoList : [],
-
-    }
-
     componentDidMount () {
-        axios.get('/ListTodo.json')
-             .then(response => {
-                let todoData = Object.values(Object.keys(response.data).map((item) => {
-                    return {...response.data[item],id : item}  
-                }).reduce((item ,{Date}) =>{
-                    item[Date] = item[Date] || {Date,count: 0};
-                    item[Date].count++;
-                    return item;
-                },{}))
-                this.setState({
-                    todoList : todoData ,
-                })
-             }).catch(err=>{
-                //error Massage
-             })
+     this.props.onFetchChartData(this.props.userid,this.props.token);  
     }
-
-  
-
     render(){
-      
-            return (
-                <div className={classes.ChartTodo}>
-                    <Paper className={classes.Paper} elevation={2}>
-                      <Text textAnchor="middle" className={classes.Text} >NO. Of Task</Text>
-                        <ResponsiveContainer width="100%" height={600}>
+        
+        let chart = <CircularProgress className={classes.Loading} />
+        if(!this.props.loading) {
+            if(this.props.error) {
+            chart = <p style={{textAlign : 'center',fontSize :30}}>{this.props.error.message}</p>
+            }else {
+            chart = (<ResponsiveContainer width="100%" height={600}>
                             <BarChart
                                     style={{ margin: "0 auto" }}
-                                     data={this.state.todoList}  >
+                                     data={Object.values(this.props.todoList)}>
                             <CartesianGrid strokeDasharray="3 3" />
                              <XAxis dataKey="Date" tickSize={5} height={100} interval={0} tick={props => {
                                     return (
@@ -57,11 +39,34 @@ class ChartTodo extends Component {
                              <Tooltip />
                              <Bar dataKey="count" fill="#8884d8" />
                            </BarChart>
-                        </ResponsiveContainer>   
+                        </ResponsiveContainer>    
+            )
+          }
+        }
+      
+            return (
+                <div className={classes.ChartTodo}>
+                    <Paper className={classes.Paper} elevation={2}>
+                      <p textAnchor="middle" className={classes.Text} >NO. Of Task</p>
+                        {chart}
                     </Paper>
                 </div>
-            )
+                )
     }
 }
 
-export default withErrorHandler(ChartTodo , axios );
+const mapStateToProps = state => {
+    return{
+        todoList : state.chart.todoList ,
+        error : state.chart.error ,
+        loading : state.chart.loading,
+        userid:state.auth.userId,
+        token : state.auth.idToken,
+    }
+}
+const mapDispatchToProps = dispatch => {
+    return {
+        onFetchChartData : (userid,token) => dispatch(actions.fetchChartData(userid,token))
+    }
+}
+export default connect(mapStateToProps,mapDispatchToProps)(withErrorHandler(ChartTodo , axios ));

@@ -19,8 +19,7 @@ const listTodo = (props) => {
                                  tabIndex={-1}
                                  disableRipple
                                  color = "primary"
-                                 inputProps={{ 'aria-labelledby': props.Key}}
-                                     
+                                 inputProps={{ 'aria-labelledby': props.Key}}       
                              />
                     </ListItemIcon>
                     <ListItemText id={props.Key} primary={props.todoText} />
