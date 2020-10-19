@@ -61,7 +61,7 @@ class Auth extends Component {
         }
         let errorMassage = null 
         if(this.props.error) {
-        errorMassage = <p style={{color :'red'}}>{this.props.error.message}</p>
+        errorMassage = <p className={classes.ErorrMessage}>{this.props.error.message}</p>
         }
         let RedirctSucssefulSign = null 
         if(this.props.isAuthenticated) {

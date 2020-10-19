@@ -9,7 +9,7 @@ const initalState = {
     redirectPath : '/' ,
 }
 
-const authStart = ( state , action ) => {
+const authStart = ( state ) => {
     return updateObject(state , {error : null , loading : true})
 }
 const authSuccess = ( state , action ) => {
@@ -27,7 +27,7 @@ const authFail = ( state , action ) => {
         loading : false
     })
 }
-const authlogout = ( state , action ) => {
+const authlogout = ( state ) => {
     return updateObject(state , {
         idToken : null , 
         userId : null ,
@@ -40,10 +40,10 @@ export const setAuthRedirectPath =(state , action ) =>{
 
 const authReducer = (state = initalState , action) => {
     switch(action.type) {
-    case actionType.AUTHENTICATE_START : return authStart(state,action) 
+    case actionType.AUTHENTICATE_START : return authStart(state) 
     case actionType.AUTHENTICATE_FAIL : return authFail(state,action) 
     case actionType.AUTHENTICATE_SUCCESS: return authSuccess(state,action)
-    case actionType.AUTHENTICATE_LOGOUT : return authlogout(state,action)
+    case actionType.AUTHENTICATE_LOGOUT : return authlogout(state)
     case actionType.SET_REDIRECT_PATH : return setAuthRedirectPath(state,action)
     default : return state 
     }

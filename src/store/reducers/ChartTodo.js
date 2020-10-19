@@ -7,7 +7,7 @@ const initialState = {
     loading :false,
 }
 
-const chartStart = (state,action) => {
+const chartStart = (state) => {
    return updateObject(state,{ loading : true })
 }
 const chartSucess = (state,action) => {
@@ -18,7 +18,7 @@ const chartFail = (state,action) => {
 }
 const chartTodoReducer = (state=initialState , action) => {
     switch(action.type) {
-        case actionType.CHART_START : return chartStart(state,action)
+        case actionType.CHART_START : return chartStart(state)
         case actionType.CHART_FETCH_DATA_SUCCESS : return chartSucess(state,action)
         case actionType.CHART_FETCH_DATA_FAILER : return chartFail(state,action)
         default :

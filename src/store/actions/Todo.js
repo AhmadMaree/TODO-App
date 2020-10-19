@@ -27,7 +27,7 @@ export const fetchTodoSuccsse = (todoData) => {
         todoData : todoData
     }
 }
-export const fetchTodoFailer = (err) => {
+export const fetchTodoFailer = () => {
     return {
         type : actionType.FETCH_TODO_FAILER,
     }
@@ -49,7 +49,7 @@ export const removeTodo = (index,token) => {
     return dispatch => {
         
         axios.delete(`/ListTodo/${index}.json?auth=`+token)
-        .then(res => {
+        .then(() => {
             dispatch(removeTodoSuccess(index))
         }).catch(err=>{
             dispatch(MessageFail(err))

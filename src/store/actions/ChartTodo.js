@@ -27,7 +27,7 @@ export const fetchChartData = (userId,token) => {
         const quaryParams = '?auth='+token+'&orderBy="userId"&equalTo="' + userId + '"';
      axios.get('/ListTodo.json'+quaryParams)
          .then(response => {
-                const todoData = Object.entries(response.data).reduce((item ,[key,value]) =>{
+                const todoData = Object.entries(response.data).reduce((item ,[,value]) =>{
                     item[value.Date] =  item[value.Date]|| {Date:value.Date,count: 0};
                     item[value.Date].count++;
                     return item;
